@@ -13,7 +13,6 @@
 		272B99B419BBCA6500ACEA6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272B99B319BBCA6500ACEA6E /* UIKit.framework */; };
 		272B99BA19BBCA6500ACEA6E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 272B99B819BBCA6500ACEA6E /* InfoPlist.strings */; };
 		272B99BC19BBCA6500ACEA6E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B99BB19BBCA6500ACEA6E /* main.m */; };
-		272B99C019BBCA6500ACEA6E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B99BF19BBCA6500ACEA6E /* AppDelegate.m */; };
 		272B99C319BBCA6500ACEA6E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 272B99C119BBCA6500ACEA6E /* Main.storyboard */; };
 		272B99C619BBCA6500ACEA6E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B99C519BBCA6500ACEA6E /* ViewController.m */; };
 		272B99C819BBCA6500ACEA6E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 272B99C719BBCA6500ACEA6E /* Images.xcassets */; };
@@ -22,8 +21,9 @@
 		272B99D119BBCA6500ACEA6E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 272B99B319BBCA6500ACEA6E /* UIKit.framework */; };
 		272B99D919BBCA6500ACEA6E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 272B99D719BBCA6500ACEA6E /* InfoPlist.strings */; };
 		272B99DB19BBCA6500ACEA6E /* TweetstepTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B99DA19BBCA6500ACEA6E /* TweetstepTests.m */; };
-		B09B3A4C19BC16E9003CC488 /* SoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B09B3A4B19BC16E9003CC488 /* SoundPlayer.m */; };
 		2740246119BC0332000557A5 /* MusicPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2740246019BC0332000557A5 /* MusicPlayerView.m */; };
+		2740246219BC19B6000557A5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 272B99BF19BBCA6500ACEA6E /* AppDelegate.m */; };
+		B09B3A4C19BC16E9003CC488 /* SoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B09B3A4B19BC16E9003CC488 /* SoundPlayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,14 +56,12 @@
 		272B99D619BBCA6500ACEA6E /* TweetstepTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TweetstepTests-Info.plist"; sourceTree = "<group>"; };
 		272B99D819BBCA6500ACEA6E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		272B99DA19BBCA6500ACEA6E /* TweetstepTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TweetstepTests.m; sourceTree = "<group>"; };
-		2F79C86C5AF64DAFA5C3DA6B /* libPods-Tweetstep.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tweetstep.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AF80F54A5E244C139F7E482F /* Pods-Tweetstep.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tweetstep.xcconfig"; path = "Pods/Pods-Tweetstep.xcconfig"; sourceTree = "<group>"; };
-		B09B3A4A19BC16E9003CC488 /* SoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundPlayer.h; sourceTree = "<group>"; };
-		B09B3A4B19BC16E9003CC488 /* SoundPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundPlayer.m; sourceTree = "<group>"; };
 		2740245F19BC0332000557A5 /* MusicPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MusicPlayerView.h; sourceTree = "<group>"; };
 		2740246019BC0332000557A5 /* MusicPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MusicPlayerView.m; sourceTree = "<group>"; };
 		2F79C86C5AF64DAFA5C3DA6B /* libPods-Tweetstep.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tweetstep.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF80F54A5E244C139F7E482F /* Pods-Tweetstep.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tweetstep.xcconfig"; path = "Pods/Pods-Tweetstep.xcconfig"; sourceTree = "<group>"; };
+		B09B3A4A19BC16E9003CC488 /* SoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundPlayer.h; sourceTree = "<group>"; };
+		B09B3A4B19BC16E9003CC488 /* SoundPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundPlayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -304,11 +302,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2740246219BC19B6000557A5 /* AppDelegate.m in Sources */,
 				272B99C619BBCA6500ACEA6E /* ViewController.m in Sources */,
-				272B99C019BBCA6500ACEA6E /* AppDelegate.m in Sources */,
 				B09B3A4C19BC16E9003CC488 /* SoundPlayer.m in Sources */,
 				2740246119BC0332000557A5 /* MusicPlayerView.m in Sources */,
-				272B99C019BBCA6500ACEA6E /* AppDelegate.m in Sources */,
 				272B99BC19BBCA6500ACEA6E /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
