@@ -63,7 +63,7 @@
                     
                     self.lastDate = [NSDate date];
                     
-                    NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@0,@1,@2,@3,@4] forKeys:data[@"filter"]];
+                    NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@4,@1,@2,@3,@0] forKeys:data[@"filter"]];
                     NSNumber *indexNumber = noteMap[data[@"keyword"]];
                     NSNumber *noteValue;
                     

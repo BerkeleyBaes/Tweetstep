@@ -29,7 +29,11 @@
     for (NSString *audioPath in audioPaths) {
         NSURL *audioPathURL = [NSURL fileURLWithPath:audioPath];
         AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:audioPathURL error:nil];
-        player.volume = 0.7;
+        if ([title isEqualToString:@"happy"]) {
+            player.volume = 0.6;
+        } else if ([title isEqualToString:@"angry"]) {
+            player.volume = 0.4;
+        }
         [players addObject:player];
     }
     self.audioPlayers = [players copy];
