@@ -12,7 +12,7 @@
 {
     [super viewDidLoad];
     
-    _webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ws://localhost:9000/tweetstep"]]];
+    _webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ws://tweetstep.herokuapp.com/tweetstep"]]];
     _webSocket.delegate = self;
     
     self.title = @"Opening Connection...";
