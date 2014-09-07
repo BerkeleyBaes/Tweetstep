@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSUInteger, SoundType) {
-    SoundTypeFirst,
-    SoundTypeSecond,
-    SoundTypeThird,
-    SoundTypeFourth,
-    SoundTypeFifth
+    SoundTypeFirst = 0,
+    SoundTypeSecond = 1,
+    SoundTypeThird = 2,
+    SoundTypeFourth = 3,
+    SoundTypeFifth = 4
 };
 
 @interface SoundPlayer : NSObject

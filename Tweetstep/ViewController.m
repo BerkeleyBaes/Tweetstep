@@ -30,6 +30,16 @@
         
         [self.webSocket on:@"update" callback:^(id data) {
             NSLog(@"%@", data);
+            NSDictionary *noteMap = @{
+                                      @"happy": @(0),
+                                      @"sad": @(1),
+                                      @"annoyed": @(2),
+                                      @"mad": @(3),
+                                      @"bored": @(4)
+                                      };
+            
+            [self.melodyPlayer playSoundForType:((NSNumber *)noteMap[data]).intValue ];
+            NSLog(@"%d", ((NSNumber *)noteMap[data]).intValue);
         }];
 
         NSLog(@"Initiate");
@@ -45,11 +55,11 @@
     
     MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
     
-    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Dicks" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
+    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Sports" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
     
-    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Ass" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
+    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Food" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
     
-    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Tits" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
+    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Games" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
     
     [self.view addSubview:greenButton];
     [self.view addSubview:redButton];
@@ -111,7 +121,6 @@
         
         self.musicMode = YES;
         [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
-        [self.melodyPlayer playSoundForType:SoundTypeFirst];
         [self.backgroundMusic play];
     }
 }
@@ -202,7 +211,6 @@
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
     [self.backgroundMusic play];
-    [self.melodyPlayer playSoundForType:SoundTypeThird];
     
 }
 
