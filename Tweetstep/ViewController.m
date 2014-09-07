@@ -4,7 +4,7 @@
 #import "MusicPlayerView.h"
 #import "SoundPlayer.h"
 
-#define SECONDS_PER_BEAT 0.428571428571
+#define SECONDS_PER_BEAT 0.42235
 
 @import AVFoundation;
 
@@ -60,14 +60,16 @@
                     NSNumber *indexNumber = noteMap[data[@"keyword"]];
                     NSNumber *noteValue;
                     if (timeInterval <= SECONDS_PER_BEAT/4) {
-                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/4];
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/2];
                     } else if (timeInterval <= SECONDS_PER_BEAT/2) {
                         noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/2];
                     } else if (timeInterval <= SECONDS_PER_BEAT) {
                         noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT];
                     } else if (timeInterval <= SECONDS_PER_BEAT*2) {
                         noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT*2];
-                    }
+                    } else noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT*2];
+                    
+                    //noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT* (arc4random() % 4 + 1)/2];
                     
                     [self.notesQueue addObject:@{
                                                  @"note" : indexNumber,
@@ -111,8 +113,8 @@
     
     self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"happy"];
     
-    self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"happybackground" ofType:@".mp3"]] error:nil];
-    self.backgroundMusic.delegate = self;
+    //self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"happybackground" ofType:@".mp3"]] error:nil];
+    //self.backgroundMusic.delegate = self;
 }
 
 - (void)expandMusicPlayer:(UIGestureRecognizer *)sender
@@ -152,6 +154,8 @@
         
         self.musicMode = YES;
         [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
+        self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@background", button.titleLabel.text.lowercaseString] ofType:@".mp3"]] error:nil];
+        self.backgroundMusic.delegate = self;
         [self.backgroundMusic play];
         [self playFromQueue];
     }
@@ -245,28 +249,33 @@
     [self.backgroundMusic play];
 }
 -(void)playFromQueue {
-    
-    int noteIndex = [self.notesQueue[self.notesCounter][@"note"] intValue];
-    [self.melodyPlayer playSoundForType:noteIndex];
-    
-    CGFloat size = arc4random() % 80 + 20;
-    UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(arc4random() % 320, arc4random() % 568,size,size)];
-    circleView.alpha = 0.5;
-    circleView.layer.cornerRadius = size / 2;
-    circleView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:circleView];
-    [UIView animateWithDuration:1.0
-                     animations:^{
-                         circleView.transform = CGAffineTransformMakeScale(1.5, 1.5);
-                         circleView.alpha = 0;
-                     }
-                     completion:^(BOOL finished){
-                         [circleView removeFromSuperview];
-                     }
-     ];
-    
-    self.notesCounter++;
-    [self performSelector:@selector(playFromQueue) withObject:nil afterDelay:[self.notesQueue[self.notesCounter][@"note_value"] doubleValue]];
+    if (self.musicMode) {
+        int noteIndex = [self.notesQueue[self.notesCounter][@"note"] intValue];
+        [self.melodyPlayer playSoundForType:noteIndex];
+        
+        CGFloat size = arc4random() % 80 + 20;
+        UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(arc4random() % 320, arc4random() % 568,size,size)];
+        circleView.alpha = 0.5;
+        circleView.layer.cornerRadius = size / 2;
+        circleView.backgroundColor = [UIColor whiteColor];
+        [self.view addSubview:circleView];
+        [UIView animateWithDuration:1.0
+                         animations:^{
+                             circleView.transform = CGAffineTransformMakeScale(1.5, 1.5);
+                             circleView.alpha = 0;
+                         }
+                         completion:^(BOOL finished){
+                             [circleView removeFromSuperview];
+                         }
+         ];
+        if (self.notesCounter < [self.notesQueue count]){
+            self.notesCounter++;
+            
+        } else {
+            self.notesCounter = 0;
+        }
+        [self performSelector:@selector(playFromQueue) withObject:nil afterDelay:[self.notesQueue[self.notesCounter][@"note_value"] doubleValue]];
+    }
 }
 
 @end

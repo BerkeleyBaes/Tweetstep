@@ -26,6 +26,9 @@
 		2740246B19BC63C4000557A5 /* happysound4.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2740246619BC63C4000557A5 /* happysound4.mp3 */; };
 		2740246C19BC63C4000557A5 /* happysound5.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2740246719BC63C4000557A5 /* happysound5.mp3 */; };
 		2740247019BC67B7000557A5 /* happybackground.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2740246F19BC67B7000557A5 /* happybackground.mp3 */; };
+		2740247219BC90DF000557A5 /* chillbackground.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2740247119BC90DF000557A5 /* chillbackground.mp3 */; };
+		27A4B4C319BC99F90067BE23 /* sadbackground.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 27A4B4C219BC99F90067BE23 /* sadbackground.mp3 */; };
+		27A4B4C519BC9CF70067BE23 /* angrybackground.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 27A4B4C419BC9CF70067BE23 /* angrybackground.mp3 */; };
 		B09B3A4C19BC16E9003CC488 /* SoundPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = B09B3A4B19BC16E9003CC488 /* SoundPlayer.m */; };
 		B09B3A4E19BC1CC1003CC488 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B09B3A4D19BC1CC1003CC488 /* Images.xcassets */; };
 		B09B3A5619BC1D22003CC488 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B09B3A5119BC1D22003CC488 /* InfoPlist.strings */; };
@@ -66,6 +69,9 @@
 		2740246619BC63C4000557A5 /* happysound4.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = happysound4.mp3; sourceTree = "<group>"; };
 		2740246719BC63C4000557A5 /* happysound5.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = happysound5.mp3; sourceTree = "<group>"; };
 		2740246F19BC67B7000557A5 /* happybackground.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = happybackground.mp3; sourceTree = "<group>"; };
+		2740247119BC90DF000557A5 /* chillbackground.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = chillbackground.mp3; sourceTree = "<group>"; };
+		27A4B4C219BC99F90067BE23 /* sadbackground.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = sadbackground.mp3; sourceTree = "<group>"; };
+		27A4B4C419BC9CF70067BE23 /* angrybackground.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = angrybackground.mp3; sourceTree = "<group>"; };
 		2F79C86C5AF64DAFA5C3DA6B /* libPods-Tweetstep.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tweetstep.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF80F54A5E244C139F7E482F /* Pods-Tweetstep.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tweetstep.xcconfig"; path = "Pods/Pods-Tweetstep.xcconfig"; sourceTree = "<group>"; };
 		B09B3A4A19BC16E9003CC488 /* SoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundPlayer.h; sourceTree = "<group>"; };
@@ -173,6 +179,9 @@
 		B09B3A4F19BC1D10003CC488 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				27A4B4C419BC9CF70067BE23 /* angrybackground.mp3 */,
+				27A4B4C219BC99F90067BE23 /* sadbackground.mp3 */,
+				2740247119BC90DF000557A5 /* chillbackground.mp3 */,
 				2740246F19BC67B7000557A5 /* happybackground.mp3 */,
 				2740246319BC63C4000557A5 /* happysound1.mp3 */,
 				2740246419BC63C4000557A5 /* happysound2.mp3 */,
@@ -276,12 +285,15 @@
 				B09B3A5819BC1D22003CC488 /* Tweetstep-Info.plist in Resources */,
 				2740247019BC67B7000557A5 /* happybackground.mp3 in Resources */,
 				2740246A19BC63C4000557A5 /* happysound3.mp3 in Resources */,
+				27A4B4C319BC99F90067BE23 /* sadbackground.mp3 in Resources */,
 				272B99C319BBCA6500ACEA6E /* Main.storyboard in Resources */,
 				B09B3A5619BC1D22003CC488 /* InfoPlist.strings in Resources */,
 				2740246B19BC63C4000557A5 /* happysound4.mp3 in Resources */,
 				B09B3A4E19BC1CC1003CC488 /* Images.xcassets in Resources */,
 				2740246919BC63C4000557A5 /* happysound2.mp3 in Resources */,
+				2740247219BC90DF000557A5 /* chillbackground.mp3 in Resources */,
 				2740246C19BC63C4000557A5 /* happysound5.mp3 in Resources */,
+				27A4B4C519BC9CF70067BE23 /* angrybackground.mp3 in Resources */,
 				2740246819BC63C4000557A5 /* happysound1.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
