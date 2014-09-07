@@ -1,13 +1,10 @@
 #import "ViewController.h"
 #import <pop/POP.h>
+#import "MusicPlayerView.h"
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
-@property (weak, nonatomic) IBOutlet UIButton *greenButton;
-@property (weak, nonatomic) IBOutlet UIButton *redButton;
-@property (weak, nonatomic) IBOutlet UIButton *purpleButton;
-@property (weak, nonatomic) IBOutlet UIButton *blueButton;
 
 @end
 
@@ -24,10 +21,36 @@
     logoFadeIn.duration = 1.0;
     [self.logoImageView pop_addAnimation:logoFadeIn forKey:@"logoFadeIn"];
     [self addMoveUpAnimationForView:self.logoImageView];
+    
+    
+    MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
+    
+    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
+    
+    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
+    
+    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
+    
+    [self.view addSubview:greenButton];
+    [self.view addSubview:redButton];
+    [self.view addSubview:purpleButton];
+    [self.view addSubview:blueButton];
+    
+    UITapGestureRecognizer *musicPlayerTapGreen = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(expandMusicPlayer:)];
+    UITapGestureRecognizer *musicPlayerTapRed = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(expandMusicPlayer:)];
+    UITapGestureRecognizer *musicPlayerTapPurple = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(expandMusicPlayer:)];
+    UITapGestureRecognizer *musicPlayerTapBlue = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(expandMusicPlayer:)];
+    
+    [greenButton addGestureRecognizer:musicPlayerTapGreen];
+    [redButton addGestureRecognizer:musicPlayerTapRed];
+    [purpleButton addGestureRecognizer:musicPlayerTapPurple];
+    [blueButton addGestureRecognizer:musicPlayerTapBlue];
+    
 }
 
-- (IBAction)expandButton:(id)sender {
-    UIButton *button = (UIButton *)sender;
+- (void)expandMusicPlayer:(UIGestureRecognizer *)sender
+{
+    MusicPlayerView *button = (MusicPlayerView *) sender.view;
     [self.view bringSubviewToFront:button];
     POPBasicAnimation *expandAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
     expandAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
@@ -39,8 +62,8 @@
         POPBasicAnimation *fillScreenAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
         fillScreenAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
         fillScreenAnimation.toValue = [NSValue valueWithCGRect:self.view.frame];
+        fillScreenAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) { [button enterMusicPlayerMode]; };
         
-        [button setTitle:@"" forState:UIControlStateNormal];
         [button pop_addAnimation:fillScreenAnimation forKey:nil];
     };
     
