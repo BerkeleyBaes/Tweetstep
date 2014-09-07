@@ -8,6 +8,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
 @property (strong, nonatomic) SRWebSocket *webSocket;
 
+@property (nonatomic) BOOL musicMode;
+
 @end
 
 @implementation ViewController
@@ -58,25 +60,79 @@
 
 - (void)expandMusicPlayer:(UIGestureRecognizer *)sender
 {
-    MusicPlayerView *button = (MusicPlayerView *) sender.view;
-    [self.view bringSubviewToFront:button];
-    POPBasicAnimation *expandAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
-    expandAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
-    
-    CGRect newFrame = CGRectMake(0, button.frame.origin.y, self.view.frame.size.width, button.frame.size.height);
-    expandAnimation.toValue = [NSValue valueWithCGRect:newFrame];
-    expandAnimation.delegate = self;
-    expandAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
-        POPBasicAnimation *fillScreenAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
-        fillScreenAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
-        fillScreenAnimation.toValue = [NSValue valueWithCGRect:self.view.frame];
-        fillScreenAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) { [button enterMusicPlayerMode]; };
+    if (!self.musicMode) {
+        MusicPlayerView *button = (MusicPlayerView *) sender.view;
+        [self.view bringSubviewToFront:button];
+        POPBasicAnimation *expandAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+        expandAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
         
-        [button pop_addAnimation:fillScreenAnimation forKey:nil];
+        CGRect newFrame = CGRectMake(0, button.frame.origin.y, self.view.frame.size.width, button.frame.size.height);
+        expandAnimation.toValue = [NSValue valueWithCGRect:newFrame];
+        expandAnimation.delegate = self;
+        expandAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
+            POPBasicAnimation *fillScreenAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+            fillScreenAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
+            fillScreenAnimation.toValue = [NSValue valueWithCGRect:self.view.frame];
+            fillScreenAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
+                [button enterMusicMode];
+                [button.exitButton addTarget:self action:@selector(collapseMusicPlayer:) forControlEvents:UIControlEventTouchUpInside];
+            };
+            [button pop_addAnimation:fillScreenAnimation forKey:nil];
+            
+            POPBasicAnimation *iconToLeftAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+            iconToLeftAnimation.fromValue = [NSValue valueWithCGRect:button.iconView.frame];
+            iconToLeftAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(11, 31, 22, 22)];
+            [button.iconView pop_addAnimation:iconToLeftAnimation forKey:nil];
+            
+            POPBasicAnimation *setNavBarTitleAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+            setNavBarTitleAnimation.fromValue = [NSValue valueWithCGRect:button.titleLabel.frame];
+            setNavBarTitleAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(0, 33, button.frame.size.width, 18)];
+            [button.titleLabel pop_addAnimation:setNavBarTitleAnimation forKey:nil];
+            [button.titleLabel setFont:[UIFont boldSystemFontOfSize:17]];
+            
+
+        };
+        
+        [button pop_addAnimation:expandAnimation forKey:nil];
+        
+        self.musicMode = YES;
+    }
+}
+
+- (void)collapseMusicPlayer:(UIButton *)sender
+{
+    MusicPlayerView *button = (MusicPlayerView *) sender.superview;
+    POPBasicAnimation *collapseAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+    collapseAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
+    
+    CGRect newFrame = CGRectMake(0, button.originalFrame.origin.y, 320, 100);
+    collapseAnimation.toValue = [NSValue valueWithCGRect:newFrame];
+    collapseAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
+        POPBasicAnimation *squishViewAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+        squishViewAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
+        squishViewAnimation.toValue = [NSValue valueWithCGRect:button.originalFrame];
+        squishViewAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
+            self.musicMode = NO;
+        };
+        [button pop_addAnimation:squishViewAnimation forKey:nil];
     };
     
-    [button pop_addAnimation:expandAnimation forKey:nil];
+    [button pop_addAnimation:collapseAnimation forKey:nil];
+    [button exitMusicMode];
+    
+    POPBasicAnimation *iconToCenterAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+    iconToCenterAnimation.fromValue = [NSValue valueWithCGRect:button.iconView.frame];
+    iconToCenterAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(button.frame.size.width / 2 - 20, 20, 40, 40)];
+    [button.iconView pop_addAnimation:iconToCenterAnimation forKey:nil];
+    
+    POPBasicAnimation *removeNavBarTitleAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+    removeNavBarTitleAnimation.fromValue = [NSValue valueWithCGRect:button.titleLabel.frame];
+    removeNavBarTitleAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(0, 60, button.frame.size.width, 20)];
+    [button.titleLabel pop_addAnimation:removeNavBarTitleAnimation forKey:nil];
+    [button.titleLabel setFont:[UIFont systemFontOfSize:15.0]];
 }
+
+
 #pragma mark - SRWebSocketDelegate
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
@@ -107,7 +163,8 @@
     self.title = @"Connection Closed! (see logs)";
     _webSocket = nil;
 }
-#pragma mark - 
+
+#pragma mark - Animations
 - (POPBasicAnimation *)fadeOutAnimation
 {
     POPBasicAnimation *fadeOutAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewAlpha];
@@ -156,6 +213,5 @@
         }
     }
 }
-
 
 @end
