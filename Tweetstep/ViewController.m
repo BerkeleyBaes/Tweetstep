@@ -1,12 +1,12 @@
 #import <pop/POP.h>
-#import <SocketRocket/SRWebSocket.h>
+#import <SIOSocket/SIOSocket.h>
 #import "ViewController.h"
 #import "MusicPlayerView.h"
 
-@interface ViewController () <SRWebSocketDelegate>
+@interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
-@property (strong, nonatomic) SRWebSocket *webSocket;
+@property (strong, nonatomic) SIOSocket *webSocket;
 
 @end
 
@@ -18,11 +18,14 @@
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
     
-    self.webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ws://localhost:9999/tweetstep"]]];
-    self.webSocket.delegate = self;
+    [SIOSocket socketWithHost: @"http://localhost:3000" response: ^(SIOSocket *socket)
+    {
+        self.webSocket = socket;
+    }];
     
-    self.title = @"Opening Connection...";
-    [self.webSocket open];
+    [self.webSocket on:@"update" callback:^(id data) {
+        NSLog(@"%@", data);
+    }];
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
     logoFadeIn.name = @"logoFadeIn";
@@ -77,37 +80,7 @@
     
     [button pop_addAnimation:expandAnimation forKey:nil];
 }
-#pragma mark - SRWebSocketDelegate
-
-- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    NSLog(@"Websocket Connected");
-    self.title = @"Connected!";
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
-{
-    NSLog(@":( Websocket Failed With Error %@", error);
-    
-    self.title = @"Connection Failed! (see logs)";
-    _webSocket = nil;
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
-{
-    NSLog(@"Received \"%@\"", message);
-    NSData *messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
-    NSError *error = nil;
-    NSDictionary *messageDict = [NSJSONSerialization JSONObjectWithData:messageData options:NSJSONReadingAllowFragments error:&error];
-    self.welcomeLabel.text = messageDict[@"text"];
-}
-
-- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
-{
-    NSLog(@"WebSocket closed");
-    self.title = @"Connection Closed! (see logs)";
-    _webSocket = nil;
-}
-#pragma mark - 
+#pragma mark -
 - (POPBasicAnimation *)fadeOutAnimation
 {
     POPBasicAnimation *fadeOutAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewAlpha];
