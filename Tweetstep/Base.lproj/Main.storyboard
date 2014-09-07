@@ -21,65 +21,13 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="5Dh-LI-WNc">
-                                <rect key="frame" x="0.0" y="368" width="160" height="100"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.40031673376917448" green="0.82944036989795922" blue="0.34623974875283547" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="Moods">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="expandButton:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="fo5-EA-LlO"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="UxG-eO-f2Z">
-                                <rect key="frame" x="0.0" y="468" width="160" height="100"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.4803925751033174" green="0.23722539909242024" blue="0.67570153061224492" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="Presidents">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="expandButton:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="FkN-M6-NTx"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="cXD-vr-QNE">
-                                <rect key="frame" x="160" y="468" width="160" height="100"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.33333333329999998" green="0.67450980390000004" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="Food">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="expandButton:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="uVp-Il-RX7"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4jk-UV-uB1">
-                                <rect key="frame" x="160" y="368" width="160" height="100"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.83954653530000001" green="0.27825466339999999" blue="0.3131529898" alpha="1" colorSpace="calibratedRGB"/>
-                                <state key="normal" title="Countries">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="expandButton:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="xa4-d6-sRZ"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.32549019607843138" green="0.32549019607843138" blue="0.32549019607843138" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <connections>
-                        <outlet property="blueButton" destination="cXD-vr-QNE" id="tMb-sh-U0I"/>
-                        <outlet property="greenButton" destination="5Dh-LI-WNc" id="E7m-s8-fxC"/>
                         <outlet property="logoImageView" destination="FpT-1a-1Y5" id="pjO-LT-Cpb"/>
-                        <outlet property="purpleButton" destination="UxG-eO-f2Z" id="Kbg-ck-Tch"/>
-                        <outlet property="redButton" destination="4jk-UV-uB1" id="cq7-Vs-0mR"/>
                         <outlet property="welcomeLabel" destination="UNh-cL-5Mo" id="iVf-FQ-5vT"/>
                     </connections>
                 </viewController>
