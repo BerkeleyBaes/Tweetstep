@@ -29,6 +29,7 @@
     for (NSString *audioPath in audioPaths) {
         NSURL *audioPathURL = [NSURL fileURLWithPath:audioPath];
         AVAudioPlayer *player = [[AVAudioPlayer alloc] initWithContentsOfURL:audioPathURL error:nil];
+        player.volume = 0.7;
         [players addObject:player];
     }
     self.audioPlayers = [players copy];
