@@ -214,9 +214,4 @@
     }
 }
 
-- (BOOL)musicMode {
-    if (!_musicMode) { _musicMode = NO; }
-    return _musicMode;
-}
-
 @end
