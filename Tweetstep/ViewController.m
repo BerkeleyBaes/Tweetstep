@@ -20,18 +20,14 @@
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
     
-    [SIOSocket socketWithHost: @"http://localhost:3000" response: ^(SIOSocket *socket)
+    [SIOSocket socketWithHost: @"http://tweetstep.herokuapp.com" response: ^(SIOSocket *socket)
     {
         self.webSocket = socket;
         
-        __weak typeof(self) weakSelf = self;
-        
         [self.webSocket on:@"update" callback:^(id data) {
-            NSLog(@"%@", data[@"text"]);
+            NSLog(@"%@", data);
         }];
-        
     }];
-    
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
     logoFadeIn.name = @"logoFadeIn";
