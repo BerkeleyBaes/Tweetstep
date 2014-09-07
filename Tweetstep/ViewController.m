@@ -38,7 +38,7 @@
     self.welcomeLabel.alpha = 0;
     _notesCounter = 0;
     _notesQueue = [[NSMutableArray alloc]init];
-    _secondsPerBeat = 0.42235;
+    _secondsPerBeat = 0.418;
     _isPlaying = NO;
     
     [SIOSocket socketWithHost: kURL response: ^(SIOSocket *socket)
@@ -63,7 +63,7 @@
                     
                     self.lastDate = [NSDate date];
                     
-                    NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@0,@1,@2,@3,@4] forKeys:data[@"filter"]];
+                    NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@4,@1,@2,@3,@0] forKeys:data[@"filter"]];
                     NSNumber *indexNumber = noteMap[data[@"keyword"]];
                     NSNumber *noteValue;
                     
@@ -133,7 +133,7 @@
     [purpleButton addGestureRecognizer:musicPlayerTapPurple];
     [blueButton addGestureRecognizer:musicPlayerTapBlue];
     
-    self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"happy"];
+    self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"angry"];
     
     //self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"happybackground" ofType:@".mp3"]] error:nil];
     //self.backgroundMusic.delegate = self;
@@ -176,6 +176,15 @@
         
         self.musicMode = YES;
         [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
+        
+        //CHANGE FOR SPECIFIC BUTTONS
+        if ([button.titleLabel.text.lowercaseString isEqualToString:@"chill"] ||
+            [button.titleLabel.text.lowercaseString isEqualToString:@"angry"] ) {
+            self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"angry"];
+        } else {
+            self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"happy"];
+        }
+        
         self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@background", button.titleLabel.text.lowercaseString] ofType:@".mp3"]] error:nil];
         self.backgroundMusic.delegate = self;
     }
