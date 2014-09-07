@@ -1,28 +1,28 @@
-#import "ViewController.h"
 #import <pop/POP.h>
+#import <SocketRocket/SRWebSocket.h>
+#import "ViewController.h"
 #import "MusicPlayerView.h"
 
 @interface ViewController () <SRWebSocketDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
+@property (strong, nonatomic) SRWebSocket *webSocket;
 
 @end
 
 @implementation ViewController
-{
-    SRWebSocket *_webSocket;
-}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
     
-    _webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ws://localhost:9999/tweetstep"]]];
-    _webSocket.delegate = self;
+    self.webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ws://localhost:9999/tweetstep"]]];
+    self.webSocket.delegate = self;
     
     self.title = @"Opening Connection...";
-    [_webSocket open];
+    [self.webSocket open];
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
     logoFadeIn.name = @"logoFadeIn";
