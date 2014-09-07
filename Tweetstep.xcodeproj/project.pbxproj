@@ -64,7 +64,6 @@
 		2740246019BC0332000557A5 /* MusicPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MusicPlayerView.m; sourceTree = "<group>"; };
 		2F79C86C5AF64DAFA5C3DA6B /* libPods-Tweetstep.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tweetstep.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF80F54A5E244C139F7E482F /* Pods-Tweetstep.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tweetstep.xcconfig"; path = "Pods/Pods-Tweetstep.xcconfig"; sourceTree = "<group>"; };
->>>>>>> Create custom button views for expanding
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,7 +139,6 @@
 				272B99B619BBCA6500ACEA6E /* Supporting Files */,
 				2740245F19BC0332000557A5 /* MusicPlayerView.h */,
 				2740246019BC0332000557A5 /* MusicPlayerView.m */,
->>>>>>> Create custom button views for expanding
 			);
 			path = Tweetstep;
 			sourceTree = "<group>";
