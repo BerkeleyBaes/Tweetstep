@@ -72,6 +72,10 @@
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
 {
     NSLog(@"Received \"%@\"", message);
+    NSData *messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error = nil;
+    NSDictionary *messageDict = [NSJSONSerialization JSONObjectWithData:messageData options:NSJSONReadingAllowFragments error:&error];
+    self.welcomeLabel.text = messageDict[@"text"];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
