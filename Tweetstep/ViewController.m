@@ -3,6 +3,9 @@
 #import "ViewController.h"
 #import "MusicPlayerView.h"
 #import "SoundPlayer.h"
+
+#define SECONDS_PER_BEAT 0.428571428571
+
 @import AVFoundation;
 
 @interface ViewController () <AVAudioPlayerDelegate>
@@ -13,6 +16,11 @@
 
 @property (strong, nonatomic) AVAudioPlayer *backgroundMusic;
 @property (strong, nonatomic) SoundPlayer *melodyPlayer;
+
+@property (strong, nonatomic) NSMutableArray *notesQueue;
+
+@property (nonatomic) int notesCounter;
+
 @property (nonatomic) BOOL musicMode;
 
 @end
@@ -24,6 +32,8 @@
     [super viewDidLoad];
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
+    _notesCounter = 0;
+    _notesQueue = [[NSMutableArray alloc]init];
     
     [SIOSocket socketWithHost: @"http://tweetstep.herokuapp.com" response: ^(SIOSocket *socket)
     {
@@ -45,10 +55,24 @@
                     NSLog(@"%@", tweet);
                     self.lastDate = [NSDate date];
                     
+                    
                     NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@0,@1,@2,@3,@4] forKeys:data[@"filter"]];
                     NSNumber *indexNumber = noteMap[data[@"keyword"]];
-                    [self.melodyPlayer playSoundForType:[indexNumber intValue]];
-                    NSLog(@"index %d", [indexNumber intValue]);
+                    NSNumber *noteValue;
+                    if (timeInterval <= SECONDS_PER_BEAT/4) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/4];
+                    } else if (timeInterval <= SECONDS_PER_BEAT/2) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/2];
+                    } else if (timeInterval <= SECONDS_PER_BEAT) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT];
+                    } else if (timeInterval <= SECONDS_PER_BEAT*2) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT*2];
+                    }
+                    
+                    [self.notesQueue addObject:@{
+                                                 @"note" : indexNumber,
+                                                 @"note_value" : noteValue
+                                                 }];
                 }
             }
         }];
@@ -129,6 +153,7 @@
         self.musicMode = YES;
         [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
         [self.backgroundMusic play];
+        [self playFromQueue];
     }
 }
 
@@ -218,6 +243,30 @@
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
     [self.backgroundMusic play];
+}
+-(void)playFromQueue {
+    
+    int noteIndex = [self.notesQueue[self.notesCounter][@"note"] intValue];
+    [self.melodyPlayer playSoundForType:noteIndex];
+    
+    CGFloat size = arc4random() % 80 + 20;
+    UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(arc4random() % 320, arc4random() % 568,size,size)];
+    circleView.alpha = 0.5;
+    circleView.layer.cornerRadius = size / 2;
+    circleView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:circleView];
+    [UIView animateWithDuration:1.0
+                     animations:^{
+                         circleView.transform = CGAffineTransformMakeScale(1.5, 1.5);
+                         circleView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [circleView removeFromSuperview];
+                     }
+     ];
+    
+    self.notesCounter++;
+    [self performSelector:@selector(playFromQueue) withObject:nil afterDelay:[self.notesQueue[self.notesCounter][@"note_value"] doubleValue]];
 }
 
 @end
