@@ -31,19 +31,29 @@
         
         _lastDate = [NSDate date];
         [self.webSocket on:@"update" callback:^(id data) {
-            if (![data isEqualToString:@""]) {
-                double timeInterval = [[NSDate date] timeIntervalSinceDate:self.lastDate];
-                
-                
-                NSDictionary *tweet = @{
-                                        @"text" : data,
-                                        @"time" : [NSNumber numberWithDouble:timeInterval]
-                                        };
-                NSLog(@"%@", tweet);
-                self.lastDate = [NSDate date];
+            if ([data respondsToSelector:@selector(objectForKey:)]) {
+                if (![data[@"keyword"] isEqualToString:@""]) {
+                    double timeInterval = [[NSDate date] timeIntervalSinceDate:self.lastDate];
+                    
+                    
+                    NSMutableDictionary *tweet = [[NSMutableDictionary alloc]
+                                                  initWithDictionary: @{
+                                                                        @"keyword" : data[@"keyword"],
+                                                                        @"time" : [NSNumber numberWithDouble:timeInterval],
+                                                                        @"filter" : data[@"filter"]
+                                                                        }];
+                    NSLog(@"%@", tweet);
+                    self.lastDate = [NSDate date];
+                    
+                    NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@0,@1,@2,@3,@4] forKeys:data[@"filter"]];
+                    NSNumber *indexNumber = noteMap[data[@"keyword"]];
+                    [self.melodyPlayer playSoundForType:[indexNumber intValue]];
+                    NSLog(@"index %d", [indexNumber intValue]);
+                }
             }
-            
         }];
+
+        NSLog(@"Initiate");
     }];
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
@@ -52,13 +62,13 @@
     [self.logoImageView pop_addAnimation:logoFadeIn forKey:@"logoFadeIn"];
     [self addMoveUpAnimationForView:self.logoImageView];
     
-    MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
+    MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Happy" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
     
-    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Sports" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
+    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Sad" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
     
-    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Food" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
+    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Angry" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
     
-    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Games" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
+    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Chill" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
     
     [self.view addSubview:greenButton];
     [self.view addSubview:redButton];
@@ -75,9 +85,9 @@
     [purpleButton addGestureRecognizer:musicPlayerTapPurple];
     [blueButton addGestureRecognizer:musicPlayerTapBlue];
     
-    self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"Moods"];
+    self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"happy"];
     
-    self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Moodsbackground" ofType:@".mp3"]] error:nil];
+    self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"happybackground" ofType:@".mp3"]] error:nil];
     self.backgroundMusic.delegate = self;
 }
 
@@ -112,8 +122,6 @@
             setNavBarTitleAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(0, 33, button.frame.size.width, 18)];
             [button.titleLabel pop_addAnimation:setNavBarTitleAnimation forKey:nil];
             [button.titleLabel setFont:[UIFont boldSystemFontOfSize:17]];
-            
-
         };
         
         [button pop_addAnimation:expandAnimation forKey:nil];
@@ -207,5 +215,9 @@
     }
 }
 
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    [self.backgroundMusic play];
+}
 
 @end
