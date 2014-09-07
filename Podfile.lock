@@ -1,10 +1,13 @@
 PODS:
+  - pop (1.0.6)
   - SocketRocket (0.3.1-beta2)
 
 DEPENDENCIES:
+  - pop (~> 1.0)
   - SocketRocket (= 0.3.1-beta2)
 
 SPEC CHECKSUMS:
+  pop: e518794da38942c05255eb64b36d894e70cb4f00
   SocketRocket: 79a68ae186063c65e1fe6f638b1ae2927aa5f304
 
 COCOAPODS: 0.33.1
