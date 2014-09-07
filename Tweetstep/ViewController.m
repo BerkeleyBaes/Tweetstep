@@ -5,8 +5,8 @@
 #import "SoundPlayer.h"
 
 #define HAPPY_SECONDS_PER_BEAT 0.42235
-#define kURL @"http://localhost:3000/"
-//#define kURL @"http://tweetstep.herokuapp.com"
+//#define kURL @"http://localhost:3000/"
+#define kURL @"http://tweetstep.herokuapp.com"
 @import AVFoundation;
 
 @interface ViewController () <AVAudioPlayerDelegate>
