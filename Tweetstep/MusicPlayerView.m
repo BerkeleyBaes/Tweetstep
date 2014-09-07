@@ -25,10 +25,11 @@
     self = [super initWithFrame:frame];
     if (self) {
         
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:icon];
-        imageView.frame = CGRectMake(self.frame.size.width / 2 - 20, 20, 40, 40);
-        imageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-        [self addSubview:imageView];
+        UIImageView *iconView = [[UIImageView alloc] initWithImage:icon];
+        iconView.frame = CGRectMake(self.frame.size.width / 2 - 20, 20, 40, 40);
+        iconView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+        [self addSubview:iconView];
+        self.iconView = iconView;
         
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 60, self.frame.size.width, 20)];
         titleLabel.text = title;
@@ -37,6 +38,7 @@
         titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         titleLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:titleLabel];
+        self.titleLabel = titleLabel;
         
         self.backgroundColor = color;
         
@@ -44,13 +46,18 @@
     return self;
 }
 
--(void)enterMusicPlayerMode
+-(void)enterMusicMode
 {
     UIView *navBarView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, 64)];
-    navBarView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0];
+    navBarView.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0];
     [self addSubview:navBarView];
+    
+    UIButton *exitButton = [[UIButton alloc] initWithFrame:CGRectMake(self.frame.size.width - 31, 33, 18, 18)];
+    [exitButton setBackgroundImage:[UIImage imageNamed:@"X-Button"] forState:UIControlStateNormal];
+    [self addSubview:exitButton];
+    
     [UIView animateWithDuration:0.4 animations:^{
-        navBarView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.15];
+        navBarView.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.15];
     }];
 }
 

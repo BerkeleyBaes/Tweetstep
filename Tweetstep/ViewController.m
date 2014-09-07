@@ -8,6 +8,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
 @property (strong, nonatomic) SRWebSocket *webSocket;
 
+@property (nonatomic) BOOL musicMode;
+
 @end
 
 @implementation ViewController
@@ -58,24 +60,40 @@
 
 - (void)expandMusicPlayer:(UIGestureRecognizer *)sender
 {
-    MusicPlayerView *button = (MusicPlayerView *) sender.view;
-    [self.view bringSubviewToFront:button];
-    POPBasicAnimation *expandAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
-    expandAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
-    
-    CGRect newFrame = CGRectMake(0, button.frame.origin.y, self.view.frame.size.width, button.frame.size.height);
-    expandAnimation.toValue = [NSValue valueWithCGRect:newFrame];
-    expandAnimation.delegate = self;
-    expandAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
-        POPBasicAnimation *fillScreenAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
-        fillScreenAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
-        fillScreenAnimation.toValue = [NSValue valueWithCGRect:self.view.frame];
-        fillScreenAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) { [button enterMusicPlayerMode]; };
+    if (!self.musicMode) {
+        MusicPlayerView *button = (MusicPlayerView *) sender.view;
+        [self.view bringSubviewToFront:button];
+        POPBasicAnimation *expandAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+        expandAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
         
-        [button pop_addAnimation:fillScreenAnimation forKey:nil];
-    };
-    
-    [button pop_addAnimation:expandAnimation forKey:nil];
+        CGRect newFrame = CGRectMake(0, button.frame.origin.y, self.view.frame.size.width, button.frame.size.height);
+        expandAnimation.toValue = [NSValue valueWithCGRect:newFrame];
+        expandAnimation.delegate = self;
+        expandAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
+            POPBasicAnimation *fillScreenAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+            fillScreenAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
+            fillScreenAnimation.toValue = [NSValue valueWithCGRect:self.view.frame];
+            fillScreenAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) { [button enterMusicMode]; };
+            [button pop_addAnimation:fillScreenAnimation forKey:nil];
+            
+            POPBasicAnimation *iconToLeftAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+            iconToLeftAnimation.fromValue = [NSValue valueWithCGRect:button.iconView.frame];
+            iconToLeftAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(11, 31, 22, 22)];
+            [button.iconView pop_addAnimation:iconToLeftAnimation forKey:nil];
+            
+            POPBasicAnimation *setNavBarTitleAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+            setNavBarTitleAnimation.fromValue = [NSValue valueWithCGRect:button.titleLabel.frame];
+            setNavBarTitleAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(0, 33, button.frame.size.width, 18)];
+            [button.titleLabel pop_addAnimation:setNavBarTitleAnimation forKey:nil];
+            [button.titleLabel setFont:[UIFont boldSystemFontOfSize:17]];
+            
+
+        };
+        
+        [button pop_addAnimation:expandAnimation forKey:nil];
+        
+        self.musicMode = YES;
+    }
 }
 #pragma mark - SRWebSocketDelegate
 
@@ -107,7 +125,8 @@
     self.title = @"Connection Closed! (see logs)";
     _webSocket = nil;
 }
-#pragma mark - 
+
+#pragma mark - Animations 
 - (POPBasicAnimation *)fadeOutAnimation
 {
     POPBasicAnimation *fadeOutAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewAlpha];
@@ -157,5 +176,9 @@
     }
 }
 
+- (BOOL)musicMode {
+    if (!_musicMode) { _musicMode = NO; }
+    return _musicMode;
+}
 
 @end

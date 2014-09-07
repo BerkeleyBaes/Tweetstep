@@ -10,10 +10,13 @@
 
 @interface MusicPlayerView : UIView
 
+@property (strong, nonatomic) UILabel *titleLabel;
+@property (strong, nonatomic) UIImageView *iconView;
+
 - (id)initWithFrame:(CGRect)frame
               title:(NSString *)title
                icon: (UIImage *)icon
     backgroundColor: (UIColor *)color;
 
-- (void)enterMusicPlayerMode;
+- (void)enterMusicMode;
 @end
