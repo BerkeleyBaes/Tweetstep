@@ -4,6 +4,10 @@
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
+@property (weak, nonatomic) IBOutlet UIButton *greenButton;
+@property (weak, nonatomic) IBOutlet UIButton *redButton;
+@property (weak, nonatomic) IBOutlet UIButton *purpleButton;
+@property (weak, nonatomic) IBOutlet UIButton *blueButton;
 
 @end
 
@@ -21,6 +25,10 @@
     [self.logoImageView pop_addAnimation:logoFadeIn forKey:@"logoFadeIn"];
     [self addMoveUpAnimationForView:self.logoImageView];
 }
+
+- (IBAction)expandButton:(id)sender {
+}
+
 
 - (POPBasicAnimation *)fadeOutAnimation
 {
