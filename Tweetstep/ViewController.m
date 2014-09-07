@@ -282,8 +282,8 @@
         [self.melodyPlayer playSoundForType:noteIndex];
         
         CGFloat size = arc4random() % 80 + 40;
-        int x = arc4random() % 320;
-        int y = arc4random() % 568;
+        int x = arc4random() % 250 + 30;
+        int y = arc4random() % 475 + 50;
         UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(x,y,size,size)];
         circleView.alpha = 0.5;
         circleView.layer.cornerRadius = size / 2;
@@ -292,6 +292,8 @@
         UILabel *wordLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, size, size)];
         wordLabel.textAlignment = NSTextAlignmentCenter;
         wordLabel.text = [NSString stringWithFormat:@"#%@", noteDictionary[@"keyword"]];
+        wordLabel.font = [UIFont boldSystemFontOfSize:12.0];
+        wordLabel.textColor = [UIColor grayColor];
         [circleView addSubview:wordLabel];
         
         [self.view addSubview:circleView];
