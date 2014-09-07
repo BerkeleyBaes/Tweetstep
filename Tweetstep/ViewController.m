@@ -40,6 +40,23 @@
             
             [self.melodyPlayer playSoundForType:((NSNumber *)noteMap[data]).intValue ];
             NSLog(@"%d", ((NSNumber *)noteMap[data]).intValue);
+            
+            CGFloat size = arc4random() % 80 + 20;
+            UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(arc4random() % 320, arc4random() % 568,size,size)];
+            circleView.alpha = 0.5;
+            circleView.layer.cornerRadius = size / 2;
+            circleView.backgroundColor = [UIColor whiteColor];
+            [self.view addSubview:circleView];
+            [UIView animateWithDuration:1.0
+                             animations:^{
+                                 circleView.transform = CGAffineTransformMakeScale(1.5, 1.5);
+                                 circleView.alpha = 0;
+                
+            }
+                             completion:^(BOOL finished){
+                                 [circleView removeFromSuperview];
+                             }
+             ];
         }];
 
         NSLog(@"Initiate");
