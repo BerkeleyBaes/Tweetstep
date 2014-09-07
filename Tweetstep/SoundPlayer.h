@@ -20,5 +20,6 @@ typedef NS_ENUM(NSUInteger, SoundType) {
 
 - (instancetype)initWithTitle:(NSString *)title;
 - (void)playSoundForType:(SoundType)type;
+- (void)stopAll;
 
 @end

@@ -62,5 +62,10 @@
             break;
     }
 }
+-(void)stopAll {
+    for (int i = 0; i < self.audioPlayers.count; i++) {
+        [(AVAudioPlayer*)self.audioPlayers[i] stop];
+    }
+}
 
 @end

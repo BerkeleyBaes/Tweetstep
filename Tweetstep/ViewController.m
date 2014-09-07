@@ -4,8 +4,9 @@
 #import "MusicPlayerView.h"
 #import "SoundPlayer.h"
 
-#define SECONDS_PER_BEAT 0.42235
-
+#define HAPPY_SECONDS_PER_BEAT 0.42235
+#define kURL @"http://localhost:3000/"
+//#define kURL @"http://tweetstep.herokuapp.com"
 @import AVFoundation;
 
 @interface ViewController () <AVAudioPlayerDelegate>
@@ -23,6 +24,9 @@
 
 @property (nonatomic) BOOL musicMode;
 
+@property (nonatomic) float secondsPerBeat;
+
+@property (nonatomic) BOOL isPlaying;
 @end
 
 @implementation ViewController
@@ -34,49 +38,67 @@
     self.welcomeLabel.alpha = 0;
     _notesCounter = 0;
     _notesQueue = [[NSMutableArray alloc]init];
+    _secondsPerBeat = 0.42235;
+    _isPlaying = NO;
     
-    [SIOSocket socketWithHost: @"http://tweetstep.herokuapp.com" response: ^(SIOSocket *socket)
+    [SIOSocket socketWithHost: kURL response: ^(SIOSocket *socket)
     {
         self.webSocket = socket;
         
         _lastDate = [NSDate date];
         [self.webSocket on:@"update" callback:^(id data) {
+            
             if ([data respondsToSelector:@selector(objectForKey:)]) {
                 if (![data[@"keyword"] isEqualToString:@""]) {
                     double timeInterval = [[NSDate date] timeIntervalSinceDate:self.lastDate];
                     
                     
-                    NSMutableDictionary *tweet = [[NSMutableDictionary alloc]
-                                                  initWithDictionary: @{
-                                                                        @"keyword" : data[@"keyword"],
-                                                                        @"time" : [NSNumber numberWithDouble:timeInterval],
-                                                                        @"filter" : data[@"filter"]
-                                                                        }];
-                    NSLog(@"%@", tweet);
-                    self.lastDate = [NSDate date];
+                    //                    NSMutableDictionary *tweet = [[NSMutableDictionary alloc]
+                    //                                                  initWithDictionary: @{
+                    //                                                                        @"keyword" : data[@"keyword"],
+                    //                                                                        @"time" : [NSNumber numberWithDouble:timeInterval],
+                    //                                                                        @"filter" : data[@"filter"]
+                    //                                                                        }];
+                    //NSLog(@"%@", tweet);
                     
+                    self.lastDate = [NSDate date];
                     
                     NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@0,@1,@2,@3,@4] forKeys:data[@"filter"]];
                     NSNumber *indexNumber = noteMap[data[@"keyword"]];
                     NSNumber *noteValue;
-                    if (timeInterval <= SECONDS_PER_BEAT/4) {
-                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/2];
-                    } else if (timeInterval <= SECONDS_PER_BEAT/2) {
-                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/2];
-                    } else if (timeInterval <= SECONDS_PER_BEAT) {
-                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT];
-                    } else if (timeInterval <= SECONDS_PER_BEAT*2) {
-                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT*2];
-                    } else noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT*2];
+                    
+                    if (timeInterval <= self.secondsPerBeat/4) {
+                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat/2];
+                    } else if (timeInterval <= self.secondsPerBeat/2) {
+                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat/2];
+                    } else if (timeInterval <= self.secondsPerBeat) {
+                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat];
+                    } else if (timeInterval <= self.secondsPerBeat*2) {
+                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat*2];
+                    } else noteValue = [NSNumber numberWithDouble:self.secondsPerBeat*2];
                     
                     //noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT* (arc4random() % 4 + 1)/2];
                     
                     [self.notesQueue addObject:@{
+                                                 @"keyword" : data[@"keyword"],
                                                  @"note" : indexNumber,
                                                  @"note_value" : noteValue
                                                  }];
+                    NSLog(@"RECEIVED: %@",data);
+                    
+                    
+                   if (self.notesQueue.count > 2) {
+                       if (self.isPlaying == NO) {
+                           if (self.musicMode) {
+                               [self.backgroundMusic play];
+                           }
+                           [self playFromQueue];
+                           self.isPlaying = YES;
+                       }
+                   }
                 }
             }
+
         }];
 
         NSLog(@"Initiate");
@@ -156,8 +178,6 @@
         [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
         self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@background", button.titleLabel.text.lowercaseString] ofType:@".mp3"]] error:nil];
         self.backgroundMusic.delegate = self;
-        [self.backgroundMusic play];
-        [self playFromQueue];
     }
 }
 
@@ -175,6 +195,7 @@
         squishViewAnimation.toValue = [NSValue valueWithCGRect:button.originalFrame];
         squishViewAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
             self.musicMode = NO;
+            self.isPlaying = NO;
         };
         [button pop_addAnimation:squishViewAnimation forKey:nil];
     };
@@ -182,6 +203,9 @@
     [button pop_addAnimation:collapseAnimation forKey:nil];
     [button exitMusicMode];
     [self.backgroundMusic stop];
+    self.notesCounter = 0;
+    [self.notesQueue removeAllObjects];
+    [self.webSocket emit:@"stop", nil];
     
     POPBasicAnimation *iconToCenterAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
     iconToCenterAnimation.fromValue = [NSValue valueWithCGRect:button.iconView.frame];
@@ -249,15 +273,27 @@
     [self.backgroundMusic play];
 }
 -(void)playFromQueue {
+    if (self.notesQueue.count == 0) {
+        return;
+    }
     if (self.musicMode) {
-        int noteIndex = [self.notesQueue[self.notesCounter][@"note"] intValue];
+        NSDictionary *noteDictionary = self.notesQueue[self.notesCounter];
+        int noteIndex = [noteDictionary[@"note"] intValue];
         [self.melodyPlayer playSoundForType:noteIndex];
         
-        CGFloat size = arc4random() % 80 + 20;
-        UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(arc4random() % 320, arc4random() % 568,size,size)];
+        CGFloat size = arc4random() % 80 + 40;
+        int x = arc4random() % 320;
+        int y = arc4random() % 568;
+        UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(x,y,size,size)];
         circleView.alpha = 0.5;
         circleView.layer.cornerRadius = size / 2;
         circleView.backgroundColor = [UIColor whiteColor];
+        
+        UILabel *wordLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, size, size)];
+        wordLabel.textAlignment = NSTextAlignmentCenter;
+        wordLabel.text = [NSString stringWithFormat:@"#%@", noteDictionary[@"keyword"]];
+        [circleView addSubview:wordLabel];
+        
         [self.view addSubview:circleView];
         [UIView animateWithDuration:1.0
                          animations:^{
@@ -268,13 +304,13 @@
                              [circleView removeFromSuperview];
                          }
          ];
-        if (self.notesCounter < [self.notesQueue count]){
+        if (self.notesCounter < [self.notesQueue count]-1){
             self.notesCounter++;
             
         } else {
             self.notesCounter = 0;
         }
-        [self performSelector:@selector(playFromQueue) withObject:nil afterDelay:[self.notesQueue[self.notesCounter][@"note_value"] doubleValue]];
+        [self performSelector:@selector(playFromQueue) withObject:nil afterDelay:[noteDictionary[@"note_value"] doubleValue]];
     }
 }
 
