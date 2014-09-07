@@ -2,19 +2,27 @@
 #import <pop/POP.h>
 #import "MusicPlayerView.h"
 
-@interface ViewController ()
+@interface ViewController () <SRWebSocketDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
 
 @end
 
 @implementation ViewController
-
+{
+    SRWebSocket *_webSocket;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
+    
+    _webSocket = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ws://localhost:9999/tweetstep"]]];
+    _webSocket.delegate = self;
+    
+    self.title = @"Opening Connection...";
+    [_webSocket open];
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
     logoFadeIn.name = @"logoFadeIn";
@@ -69,7 +77,37 @@
     
     [button pop_addAnimation:expandAnimation forKey:nil];
 }
+#pragma mark - SRWebSocketDelegate
 
+- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
+    NSLog(@"Websocket Connected");
+    self.title = @"Connected!";
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
+{
+    NSLog(@":( Websocket Failed With Error %@", error);
+    
+    self.title = @"Connection Failed! (see logs)";
+    _webSocket = nil;
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
+{
+    NSLog(@"Received \"%@\"", message);
+    NSData *messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error = nil;
+    NSDictionary *messageDict = [NSJSONSerialization JSONObjectWithData:messageData options:NSJSONReadingAllowFragments error:&error];
+    self.welcomeLabel.text = messageDict[@"text"];
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean;
+{
+    NSLog(@"WebSocket closed");
+    self.title = @"Connection Closed! (see logs)";
+    _webSocket = nil;
+}
+#pragma mark - 
 - (POPBasicAnimation *)fadeOutAnimation
 {
     POPBasicAnimation *fadeOutAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewAlpha];
@@ -118,5 +156,6 @@
         }
     }
 }
+
 
 @end
