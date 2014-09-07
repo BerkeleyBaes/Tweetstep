@@ -7,6 +7,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
 @property (strong, nonatomic) SIOSocket *webSocket;
+@property (strong, nonatomic) NSDate *lastDate;
 
 @property (nonatomic) BOOL musicMode;
 
@@ -24,8 +25,20 @@
     {
         self.webSocket = socket;
         
+        _lastDate = [NSDate date];
         [self.webSocket on:@"update" callback:^(id data) {
-            NSLog(@"%@", data);
+            if (![data isEqualToString:@""]) {
+                double timeInterval = [[NSDate date] timeIntervalSinceDate:self.lastDate];
+                
+                
+                NSDictionary *tweet = @{
+                                        @"text" : data,
+                                        @"time" : [NSNumber numberWithDouble:timeInterval]
+                                        };
+                NSLog(@"%@", tweet);
+                self.lastDate = [NSDate date];
+            }
+            
         }];
     }];
     
@@ -34,7 +47,6 @@
     logoFadeIn.duration = 1.0;
     [self.logoImageView pop_addAnimation:logoFadeIn forKey:@"logoFadeIn"];
     [self addMoveUpAnimationForView:self.logoImageView];
-    
     
     MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
     
@@ -185,5 +197,6 @@
         }
     }
 }
+
 
 @end
