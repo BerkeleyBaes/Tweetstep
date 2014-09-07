@@ -23,11 +23,15 @@
     [SIOSocket socketWithHost: @"http://localhost:3000" response: ^(SIOSocket *socket)
     {
         self.webSocket = socket;
+        
+        __weak typeof(self) weakSelf = self;
+        
+        [self.webSocket on:@"update" callback:^(id data) {
+            NSLog(@"%@", data[@"text"]);
+        }];
+        
     }];
     
-    [self.webSocket on:@"update" callback:^(id data) {
-        NSLog(@"%@", data);
-    }];
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
     logoFadeIn.name = @"logoFadeIn";
@@ -38,11 +42,11 @@
     
     MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
     
-    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
+    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Dicks" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
     
-    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
+    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Ass" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
     
-    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
+    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Tits" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
     
     [self.view addSubview:greenButton];
     [self.view addSubview:redButton];
@@ -99,6 +103,8 @@
         [button pop_addAnimation:expandAnimation forKey:nil];
         
         self.musicMode = YES;
+        
+        [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
     }
 }
 
