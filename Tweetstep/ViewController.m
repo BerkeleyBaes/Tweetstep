@@ -3,15 +3,24 @@
 #import "ViewController.h"
 #import "MusicPlayerView.h"
 #import "SoundPlayer.h"
+
+#define SECONDS_PER_BEAT 0.428571428571
+
 @import AVFoundation;
 
 @interface ViewController () <AVAudioPlayerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
 @property (strong, nonatomic) SIOSocket *webSocket;
+@property (strong, nonatomic) NSDate *lastDate;
 
 @property (strong, nonatomic) AVAudioPlayer *backgroundMusic;
 @property (strong, nonatomic) SoundPlayer *melodyPlayer;
+
+@property (strong, nonatomic) NSMutableArray *notesQueue;
+
+@property (nonatomic) int notesCounter;
+
 @property (nonatomic) BOOL musicMode;
 
 @end
@@ -23,45 +32,53 @@
     [super viewDidLoad];
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
+    _notesCounter = 0;
+    _notesQueue = [[NSMutableArray alloc]init];
     
     [SIOSocket socketWithHost: @"http://tweetstep.herokuapp.com" response: ^(SIOSocket *socket)
     {
         self.webSocket = socket;
         
+        _lastDate = [NSDate date];
         [self.webSocket on:@"update" callback:^(id data) {
-            NSLog(@"%@", data);
-            NSDictionary *noteMap = @{
-                                      @"happy": @(0),
-                                      @"sad": @(1),
-                                      @"annoyed": @(2),
-                                      @"mad": @(3),
-                                      @"bored": @(4)
-                                      };
-            
-            [self.melodyPlayer playSoundForType:((NSNumber *)noteMap[data]).intValue ];
-            NSLog(@"%d", ((NSNumber *)noteMap[data]).intValue);
-            
-            CGFloat size = arc4random() % 80 + 20;
-            UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(arc4random() % 320, arc4random() % 568,size,size)];
-            circleView.alpha = 0.5;
-            circleView.layer.cornerRadius = size / 2;
-            circleView.backgroundColor = [UIColor whiteColor];
-            [self.view addSubview:circleView];
-            [UIView animateWithDuration:1.0
-                             animations:^{
-                                 circleView.transform = CGAffineTransformMakeScale(1.5, 1.5);
-                                 circleView.alpha = 0;
-                
+            if ([data respondsToSelector:@selector(objectForKey:)]) {
+                if (![data[@"keyword"] isEqualToString:@""]) {
+                    double timeInterval = [[NSDate date] timeIntervalSinceDate:self.lastDate];
+                    
+                    
+                    NSMutableDictionary *tweet = [[NSMutableDictionary alloc]
+                                                  initWithDictionary: @{
+                                                                        @"keyword" : data[@"keyword"],
+                                                                        @"time" : [NSNumber numberWithDouble:timeInterval],
+                                                                        @"filter" : data[@"filter"]
+                                                                        }];
+                    NSLog(@"%@", tweet);
+                    self.lastDate = [NSDate date];
+                    
+                    
+                    NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@0,@1,@2,@3,@4] forKeys:data[@"filter"]];
+                    NSNumber *indexNumber = noteMap[data[@"keyword"]];
+                    NSNumber *noteValue;
+                    if (timeInterval <= SECONDS_PER_BEAT/4) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/4];
+                    } else if (timeInterval <= SECONDS_PER_BEAT/2) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT/2];
+                    } else if (timeInterval <= SECONDS_PER_BEAT) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT];
+                    } else if (timeInterval <= SECONDS_PER_BEAT*2) {
+                        noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT*2];
+                    }
+                    
+                    [self.notesQueue addObject:@{
+                                                 @"note" : indexNumber,
+                                                 @"note_value" : noteValue
+                                                 }];
+                }
             }
-                             completion:^(BOOL finished){
-                                 [circleView removeFromSuperview];
-                             }
-             ];
         }];
 
         NSLog(@"Initiate");
     }];
-    
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
     logoFadeIn.name = @"logoFadeIn";
@@ -69,14 +86,13 @@
     [self.logoImageView pop_addAnimation:logoFadeIn forKey:@"logoFadeIn"];
     [self addMoveUpAnimationForView:self.logoImageView];
     
+    MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Happy" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
     
-    MusicPlayerView *greenButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 368, 160, 100) title:@"Moods" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:102.0/255.0 green:212.0/255.0 blue:88.0/255.0 alpha:1]];
+    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Sad" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
     
-    MusicPlayerView *redButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 368, 160, 100) title:@"Sports" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:214.0/255.0 green:71.0/255.0 blue:80.0/255.0 alpha:1]];
+    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Angry" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
     
-    MusicPlayerView *purpleButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(0, 468, 160, 100) title:@"Food" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:120.0/255.0 green:93.0/255.0 blue:172.0/255.0 alpha:1]];
-    
-    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Games" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
+    MusicPlayerView *blueButton = [[MusicPlayerView alloc] initWithFrame:CGRectMake(160, 468, 160, 100) title:@"Chill" icon:[UIImage imageNamed:@"MoodIcon"] backgroundColor:[UIColor colorWithRed:85.0/255.0 green:172.0/255.0 blue:238.0/255.0 alpha:1]];
     
     [self.view addSubview:greenButton];
     [self.view addSubview:redButton];
@@ -93,9 +109,9 @@
     [purpleButton addGestureRecognizer:musicPlayerTapPurple];
     [blueButton addGestureRecognizer:musicPlayerTapBlue];
     
-    self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"Moods"];
+    self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"happy"];
     
-    self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Moodsbackground" ofType:@".mp3"]] error:nil];
+    self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"happybackground" ofType:@".mp3"]] error:nil];
     self.backgroundMusic.delegate = self;
 }
 
@@ -130,8 +146,6 @@
             setNavBarTitleAnimation.toValue = [NSValue valueWithCGRect:CGRectMake(0, 33, button.frame.size.width, 18)];
             [button.titleLabel pop_addAnimation:setNavBarTitleAnimation forKey:nil];
             [button.titleLabel setFont:[UIFont boldSystemFontOfSize:17]];
-            
-
         };
         
         [button pop_addAnimation:expandAnimation forKey:nil];
@@ -139,6 +153,7 @@
         self.musicMode = YES;
         [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
         [self.backgroundMusic play];
+        [self playFromQueue];
     }
 }
 
@@ -228,7 +243,30 @@
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
     [self.backgroundMusic play];
+}
+-(void)playFromQueue {
     
+    int noteIndex = [self.notesQueue[self.notesCounter][@"note"] intValue];
+    [self.melodyPlayer playSoundForType:noteIndex];
+    
+    CGFloat size = arc4random() % 80 + 20;
+    UIView *circleView = [[UIView alloc] initWithFrame:CGRectMake(arc4random() % 320, arc4random() % 568,size,size)];
+    circleView.alpha = 0.5;
+    circleView.layer.cornerRadius = size / 2;
+    circleView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:circleView];
+    [UIView animateWithDuration:1.0
+                     animations:^{
+                         circleView.transform = CGAffineTransformMakeScale(1.5, 1.5);
+                         circleView.alpha = 0;
+                     }
+                     completion:^(BOOL finished){
+                         [circleView removeFromSuperview];
+                     }
+     ];
+    
+    self.notesCounter++;
+    [self performSelector:@selector(playFromQueue) withObject:nil afterDelay:[self.notesQueue[self.notesCounter][@"note_value"] doubleValue]];
 }
 
 @end
