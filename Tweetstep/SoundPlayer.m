@@ -15,12 +15,14 @@
 
 @implementation SoundPlayer
 
-- (instancetype)init
+- (instancetype)initWithTitle:(NSString *)title
 {
-    NSString *audioFilePath1 = [[NSBundle mainBundle] pathForResource:@"sound1" ofType:@".mp3"];
-    NSString *audioFilePath2 = [[NSBundle mainBundle] pathForResource:@"sound2" ofType:@".mp3"];
-    NSString *audioFilePath3 = [[NSBundle mainBundle] pathForResource:@"sound3" ofType:@".mp3"];
-    NSArray *audioPaths = @[audioFilePath1, audioFilePath2, audioFilePath3];
+    NSString *audioFilePath1 = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@sound1", title] ofType:@".mp3"];
+    NSString *audioFilePath2 = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@sound2", title] ofType:@".mp3"];
+    NSString *audioFilePath3 = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@sound3", title] ofType:@".mp3"];
+    NSString *audioFilePath4 = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@sound4", title] ofType:@".mp3"];
+    NSString *audioFilePath5 = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@sound5", title] ofType:@".mp3"];
+    NSArray *audioPaths = @[audioFilePath1, audioFilePath2, audioFilePath3, audioFilePath4, audioFilePath5];
     
     NSMutableArray *players = [NSMutableArray new];
     //We have to create multiple instances of AVAudioPlayer because each can only handle one audio file
@@ -46,6 +48,14 @@
         }
         case SoundTypeThird: {
             [(AVAudioPlayer *)[self.audioPlayers objectAtIndex:2] play];
+            break;
+        }
+        case SoundTypeFourth: {
+            [(AVAudioPlayer *)[self.audioPlayers objectAtIndex:3] play];
+            break;
+        }
+        case SoundTypeFifth: {
+            [(AVAudioPlayer *)[self.audioPlayers objectAtIndex:4] play];
             break;
         }
         default:

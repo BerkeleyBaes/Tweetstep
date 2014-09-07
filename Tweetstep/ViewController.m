@@ -2,12 +2,16 @@
 #import <SIOSocket/SIOSocket.h>
 #import "ViewController.h"
 #import "MusicPlayerView.h"
+#import "SoundPlayer.h"
+@import AVFoundation;
 
-@interface ViewController ()
+@interface ViewController () <AVAudioPlayerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
 @property (strong, nonatomic) SIOSocket *webSocket;
 
+@property (strong, nonatomic) AVAudioPlayer *backgroundMusic;
+@property (strong, nonatomic) SoundPlayer *melodyPlayer;
 @property (nonatomic) BOOL musicMode;
 
 @end
@@ -20,16 +24,15 @@
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
     
-    [SIOSocket socketWithHost: @"http://localhost:3000" response: ^(SIOSocket *socket)
+    [SIOSocket socketWithHost: @"http://tweetstep.herokuapp.com" response: ^(SIOSocket *socket)
     {
         self.webSocket = socket;
         
-        __weak typeof(self) weakSelf = self;
-        
         [self.webSocket on:@"update" callback:^(id data) {
-            NSLog(@"%@", data[@"text"]);
+            NSLog(@"%@", data);
         }];
-        
+
+        NSLog(@"Initiate");
     }];
     
     
@@ -63,6 +66,10 @@
     [purpleButton addGestureRecognizer:musicPlayerTapPurple];
     [blueButton addGestureRecognizer:musicPlayerTapBlue];
     
+    self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"Moods"];
+    
+    self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"Moodsbackground" ofType:@".mp3"]] error:nil];
+    self.backgroundMusic.delegate = self;
 }
 
 - (void)expandMusicPlayer:(UIGestureRecognizer *)sender
@@ -103,8 +110,9 @@
         [button pop_addAnimation:expandAnimation forKey:nil];
         
         self.musicMode = YES;
-        
         [self.webSocket emit:button.titleLabel.text.lowercaseString, nil];
+        [self.melodyPlayer playSoundForType:SoundTypeFirst];
+        [self.backgroundMusic play];
     }
 }
 
@@ -128,6 +136,7 @@
     
     [button pop_addAnimation:collapseAnimation forKey:nil];
     [button exitMusicMode];
+    [self.backgroundMusic stop];
     
     POPBasicAnimation *iconToCenterAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
     iconToCenterAnimation.fromValue = [NSValue valueWithCGRect:button.iconView.frame];
@@ -188,6 +197,13 @@
             [self addMoveUpAnimationForView:self.welcomeLabel];
         }
     }
+}
+
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    [self.backgroundMusic play];
+    [self.melodyPlayer playSoundForType:SoundTypeThird];
+    
 }
 
 @end

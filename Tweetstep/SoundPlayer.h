@@ -11,11 +11,14 @@
 typedef NS_ENUM(NSUInteger, SoundType) {
     SoundTypeFirst,
     SoundTypeSecond,
-    SoundTypeThird
+    SoundTypeThird,
+    SoundTypeFourth,
+    SoundTypeFifth
 };
 
 @interface SoundPlayer : NSObject
 
+- (instancetype)initWithTitle:(NSString *)title;
 - (void)playSoundForType:(SoundType)type;
 
 @end
