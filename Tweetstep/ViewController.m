@@ -4,6 +4,10 @@
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
 @property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
+@property (weak, nonatomic) IBOutlet UIButton *greenButton;
+@property (weak, nonatomic) IBOutlet UIButton *redButton;
+@property (weak, nonatomic) IBOutlet UIButton *purpleButton;
+@property (weak, nonatomic) IBOutlet UIButton *blueButton;
 
 @end
 
@@ -20,6 +24,27 @@
     logoFadeIn.duration = 1.0;
     [self.logoImageView pop_addAnimation:logoFadeIn forKey:@"logoFadeIn"];
     [self addMoveUpAnimationForView:self.logoImageView];
+}
+
+- (IBAction)expandButton:(id)sender {
+    UIButton *button = (UIButton *)sender;
+    [self.view bringSubviewToFront:button];
+    POPBasicAnimation *expandAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+    expandAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
+    
+    CGRect newFrame = CGRectMake(0, button.frame.origin.y, self.view.frame.size.width, button.frame.size.height);
+    expandAnimation.toValue = [NSValue valueWithCGRect:newFrame];
+    expandAnimation.delegate = self;
+    expandAnimation.completionBlock = ^(POPAnimation *animation, BOOL finished) {
+        POPBasicAnimation *fillScreenAnimation = [POPBasicAnimation animationWithPropertyNamed:kPOPViewFrame];
+        fillScreenAnimation.fromValue = [NSValue valueWithCGRect:button.frame];
+        fillScreenAnimation.toValue = [NSValue valueWithCGRect:self.view.frame];
+        
+        [button setTitle:@"" forState:UIControlStateNormal];
+        [button pop_addAnimation:fillScreenAnimation forKey:nil];
+    };
+    
+    [button pop_addAnimation:expandAnimation forKey:nil];
 }
 
 - (POPBasicAnimation *)fadeOutAnimation
