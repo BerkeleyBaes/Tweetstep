@@ -32,7 +32,7 @@
         [self addSubview:iconView];
         self.iconView = iconView;
         
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 60, self.frame.size.width, 20)];
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 65, self.frame.size.width, 20)];
         titleLabel.text = title;
         titleLabel.textColor = [UIColor whiteColor];
         titleLabel.font = [UIFont systemFontOfSize:15.0];
