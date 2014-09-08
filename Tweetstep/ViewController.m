@@ -1,13 +1,12 @@
+@import AVFoundation;
 #import <pop/POP.h>
 #import <SIOSocket/SIOSocket.h>
 #import "ViewController.h"
 #import "MusicPlayerView.h"
 #import "SoundPlayer.h"
 
-#define HAPPY_SECONDS_PER_BEAT 0.42235
-//#define kURL @"http://localhost:3000/"
 #define kURL @"http://tweetstep.herokuapp.com"
-@import AVFoundation;
+const double kSecondsPerBeat = 0.418;
 
 @interface ViewController () <AVAudioPlayerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *logoImageView;
@@ -17,15 +16,10 @@
 
 @property (strong, nonatomic) AVAudioPlayer *backgroundMusic;
 @property (strong, nonatomic) SoundPlayer *melodyPlayer;
-
 @property (strong, nonatomic) NSMutableArray *notesQueue;
 
 @property (nonatomic) int notesCounter;
-
 @property (nonatomic) BOOL musicMode;
-
-@property (nonatomic) float secondsPerBeat;
-
 @property (nonatomic) BOOL isPlaying;
 @end
 
@@ -36,56 +30,41 @@
     [super viewDidLoad];
     self.logoImageView.alpha = 0;
     self.welcomeLabel.alpha = 0;
-    _notesCounter = 0;
-    _notesQueue = [[NSMutableArray alloc]init];
-    _secondsPerBeat = 0.418;
-    _isPlaying = NO;
+    self.notesCounter = 0;
+    self.notesQueue = [[NSMutableArray alloc]init];
+    self.isPlaying = NO;
     
-    [SIOSocket socketWithHost: kURL response: ^(SIOSocket *socket)
+    [SIOSocket socketWithHost:kURL response: ^(SIOSocket *socket)
     {
         self.webSocket = socket;
         
-        _lastDate = [NSDate date];
+        self.lastDate = [NSDate date];
         [self.webSocket on:@"update" callback:^(id data) {
             
             if ([data respondsToSelector:@selector(objectForKey:)]) {
                 if (![data[@"keyword"] isEqualToString:@""]) {
                     double timeInterval = [[NSDate date] timeIntervalSinceDate:self.lastDate];
-                    
-                    
-                    //                    NSMutableDictionary *tweet = [[NSMutableDictionary alloc]
-                    //                                                  initWithDictionary: @{
-                    //                                                                        @"keyword" : data[@"keyword"],
-                    //                                                                        @"time" : [NSNumber numberWithDouble:timeInterval],
-                    //                                                                        @"filter" : data[@"filter"]
-                    //                                                                        }];
-                    //NSLog(@"%@", tweet);
-                    
                     self.lastDate = [NSDate date];
                     
                     NSDictionary *noteMap = [NSDictionary dictionaryWithObjects:@[@4,@1,@2,@3,@0] forKeys:data[@"filter"]];
                     NSNumber *indexNumber = noteMap[data[@"keyword"]];
                     NSNumber *noteValue;
                     
-                    if (timeInterval <= self.secondsPerBeat/4) {
-                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat/2];
-                    } else if (timeInterval <= self.secondsPerBeat/2) {
-                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat/2];
-                    } else if (timeInterval <= self.secondsPerBeat) {
-                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat];
-                    } else if (timeInterval <= self.secondsPerBeat*2) {
-                        noteValue = [NSNumber numberWithDouble:self.secondsPerBeat*2];
-                    } else noteValue = [NSNumber numberWithDouble:self.secondsPerBeat*2];
-                    
-                    //noteValue = [NSNumber numberWithDouble:SECONDS_PER_BEAT* (arc4random() % 4 + 1)/2];
+                    if (timeInterval <= kSecondsPerBeat/4) {
+                        noteValue = [NSNumber numberWithDouble:kSecondsPerBeat/2];
+                    } else if (timeInterval <= kSecondsPerBeat/2) {
+                        noteValue = [NSNumber numberWithDouble:kSecondsPerBeat/2];
+                    } else if (timeInterval <= kSecondsPerBeat) {
+                        noteValue = [NSNumber numberWithDouble:kSecondsPerBeat];
+                    } else if (timeInterval <= kSecondsPerBeat*2) {
+                        noteValue = [NSNumber numberWithDouble:kSecondsPerBeat*2];
+                    } else noteValue = [NSNumber numberWithDouble:kSecondsPerBeat*2];
                     
                     [self.notesQueue addObject:@{
                                                  @"keyword" : data[@"keyword"],
                                                  @"note" : indexNumber,
                                                  @"note_value" : noteValue
                                                  }];
-                    NSLog(@"RECEIVED: %@",data);
-                    
                     
                    if (self.notesQueue.count > 2) {
                        if (self.isPlaying == NO) {
@@ -100,8 +79,6 @@
             }
 
         }];
-
-        NSLog(@"Initiate");
     }];
     
     POPBasicAnimation *logoFadeIn = [self fadeInAnimation];
@@ -134,10 +111,10 @@
     [blueButton addGestureRecognizer:musicPlayerTapBlue];
     
     self.melodyPlayer = [[SoundPlayer alloc] initWithTitle:@"angry"];
-    
-    //self.backgroundMusic = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"happybackground" ofType:@".mp3"]] error:nil];
-    //self.backgroundMusic.delegate = self;
 }
+
+#pragma mark - Animations
+
 
 - (void)expandMusicPlayer:(UIGestureRecognizer *)sender
 {
@@ -277,6 +254,9 @@
     }
 }
 
+
+#pragma mark - Audio playing methods
+
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
     [self.backgroundMusic play];
@@ -290,6 +270,7 @@
         int noteIndex = [noteDictionary[@"note"] intValue];
         [self.melodyPlayer playSoundForType:noteIndex];
         
+        //Generate circles and animate them
         CGFloat size = arc4random() % 80 + 40;
         int x = arc4random() % 250 + 30;
         int y = arc4random() % 475 + 50;

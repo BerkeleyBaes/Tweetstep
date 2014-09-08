@@ -1,11 +1,3 @@
-//
-//  SoundPlayer.m
-//  Tweetstep
-//
-//  Created by Steven Veshkini on 9/6/14.
-//  Copyright (c) 2014 CASDisrupt. All rights reserved.
-//
-
 @import AVFoundation;
 #import "SoundPlayer.h"
 
@@ -68,8 +60,8 @@
     }
 }
 -(void)stopAll {
-    for (int i = 0; i < self.audioPlayers.count; i++) {
-        [(AVAudioPlayer*)self.audioPlayers[i] stop];
+    for (AVAudioPlayer *player in self.audioPlayers) {
+        [player stop];
     }
 }
 
