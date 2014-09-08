@@ -1,4 +1,7 @@
 Tweetstep
 =========
+Creates randomly generated music based on the hashtag frequencies of real time tweets.
 
-http://techcrunch.com/events/disrupt-sf-2014/video-clips/?snapid=302644
+Video of presentation (presented by Andrew Millman): 
+https://twitter.com/TechCrunch/status/508721036255182848
+
